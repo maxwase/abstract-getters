@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "abstract-getters",
+    "abstract-getters-derive",
+]
+
+resolver = "3"

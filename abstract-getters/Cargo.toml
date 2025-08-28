@@ -1,0 +1,9 @@
+[package]
+name = "abstract-getters"
+version = "0.1.0"
+edition = "2024"
+authors = ["maxwase", "Max T <max.vvase@gmail.com>"]
+license = "MIT"
+description = "Abstract how, what and from where to get a value using a trait"
+repository = "https://github.com/maxwase/abstract-getters"
+readme = "../README.md"
