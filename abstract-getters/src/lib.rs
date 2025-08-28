@@ -137,9 +137,9 @@ mod tests {
         }
 
         impl<'top, 't, T> Field<Re> for &'top super::Foo2<'t, T> {
-            type Type = &'t str;
+            type Type = &'top &'t str;
             fn field(self) -> Self::Type {
-                self.re
+                &self.re
             }
         }
 
@@ -176,7 +176,7 @@ mod tests {
     fn test_foo2() {
         let mut foo2 = Foo2 {
             number: 42,
-            re: &"Hello".to_string(),
+            re: "Hello",
         };
 
         let _re: &i32 = (&foo2).get::<foo2::Number>();

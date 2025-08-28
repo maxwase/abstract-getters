@@ -37,20 +37,20 @@ fn main() {
 
     {
         let a/* : &i32 */ = (&concrete).get::<concrete_struct::a>();
-        let b/* : &String  */= (&concrete).get::<concrete_struct::b>();
-        let c/* : &(usize, &str)  */= (&concrete).get::<concrete_struct::c>();
+        let b/* : &String */ = (&concrete).get::<concrete_struct::b>();
+        let c/* : &(usize, &str) */ = (&concrete).get::<concrete_struct::c>();
     }
 
     {
         let a/* : &mut i32 */ = (&mut concrete).get::<concrete_struct::a>();
-        let b/* : &mut String  */= (&mut concrete).get::<concrete_struct::b>();
-        let c/* : &mut (usize, &str)  */= (&mut concrete).get::<concrete_struct::c>();
+        let b/* : &mut String */ = (&mut concrete).get::<concrete_struct::b>();
+        let c/* : &mut (usize, &str) */ = (&mut concrete).get::<concrete_struct::c>();
     }
     {
-        let a /* : i32 */ = concrete.get::<concrete_struct::a>();
+        let a/* : i32 */ = concrete.get::<concrete_struct::a>();
         // The value was moved
-        // let b /* : String */ = concrete.clone().get::<concrete_struct::b>();
-        // let c /* : (usize, &str) */ = concrete.clone().get::<concrete_struct::c>();
+        // let b/* : String */ = concrete.clone().get::<concrete_struct::b>();
+        // let c/* : (usize, &str) */ = concrete.clone().get::<concrete_struct::c>();
     }
 }
 ```
@@ -59,7 +59,8 @@ It's possible to require one or more fields from ***a*** value.
 It can be useful when designing an interface, which accepts a large struct with a lot of fields,
 when in reality it would only need a couple. Using these getters, you can design refactor-proof APIs!
 It's also possible to give users opportunities to define their own types instead of requiring them
-to implement yet another trait that *you* would need to maintain.
+to implement yet another trait that *you* would need to maintain. It's always easier to define a
+module/struct alias rather than have duplicated fields!
 
 ```rust
 use abstract_getters::{Field, Get};
@@ -88,5 +89,33 @@ where
 
     let got_string = from.get::<NameString>();
     assert_eq!(std::any::type_name_of_val(&got_string), "String");
+}
+```
+
+
+It is also possible to derive getters for enums, no more `as_`, `try_` and `into_`!
+
+```rust
+use abstract_getters::Get;
+
+#[derive(Getters)]
+enum DataEnum {
+    Inline {
+        a: i32,
+        b: String,
+    },
+    Tuple(i32, String),
+    #[allow(unused)]
+    Unit,
+    Single(i32),
+}
+
+fn test_data_enum() {
+    let mut data = DataEnum::Tuple(42, "Hello".to_string());
+
+    let wrong_variant/* : Option<&i32> */ = (&data).get::<data_enum::inline::a>();
+    assert_eq!(wrong_variant, None);
+    let int/* : Option<&mut i32> */ = (&mut data).get::<data_enum::tuple::_0>();
+    assert_eq!(*int.unwrap(), 42);
 }
 ```
