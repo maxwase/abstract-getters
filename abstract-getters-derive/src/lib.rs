@@ -1,3 +1,7 @@
+#![allow(clippy::needless_doctest_main)]
+#![doc = include_str!("../../README.md")]
+#![warn(missing_docs)]
+
 use convert_case::Casing;
 use proc_macro::TokenStream;
 use quote::{ToTokens, quote};

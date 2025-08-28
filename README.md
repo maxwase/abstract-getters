@@ -64,7 +64,9 @@ module/struct alias rather than have duplicated fields!
 
 ```rust
 use abstract_getters::{Field, Get};
+use abstract_getters_derive::Getters;
 
+#[derive(Getters, Default)]
 struct LargeStruct {
     // The function need only a
     a: i32,
@@ -77,18 +79,23 @@ struct LargeStruct {
     // 100500 more fields
 }
 
+fn main() {
+    let v = LargeStruct::default();
+
+    require_i32_and_string::<large_struct::a, large_struct::b, _>(&v);
+}
 
 /// For a `V`alue, that has a Namei32 [Field] with a [type](Field::Type) [i32]...
 /// For a `V`alue, that has a NameString [Field] with a [type](Field::Type) [String]...
 fn require_i32_and_string<'v, Namei32, NameString, V>(from: &'v V)
 where
-    &'v V: Get + Field<Namei32, Type = i32> + Field<NameString, Type = String>,
+    &'v V: Get + Field<Namei32, Type = &'v i32> + Field<NameString, Type = &'v String>,
 {
     let got_i32 = from.get::<Namei32>();
-    assert_eq!(std::any::type_name_of_val(&got_i32), "i32");
+    assert_eq!(std::any::type_name_of_val(&got_i32), "&i32");
 
     let got_string = from.get::<NameString>();
-    assert_eq!(std::any::type_name_of_val(&got_string), "String");
+    assert_eq!(std::any::type_name_of_val(&got_string), "&alloc::string::String");
 }
 ```
 
@@ -96,7 +103,8 @@ where
 It is also possible to derive getters for enums, no more `as_`, `try_` and `into_`!
 
 ```rust
-use abstract_getters::Get;
+use abstract_getters::{Get, Field};
+use abstract_getters_derive::Getters;
 
 #[derive(Getters)]
 enum DataEnum {
@@ -110,7 +118,7 @@ enum DataEnum {
     Single(i32),
 }
 
-fn test_data_enum() {
+fn main() {
     let mut data = DataEnum::Tuple(42, "Hello".to_string());
 
     let wrong_variant/* : Option<&i32> */ = (&data).get::<data_enum::inline::a>();

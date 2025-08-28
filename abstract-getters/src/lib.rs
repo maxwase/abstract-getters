@@ -1,8 +1,13 @@
+#![allow(clippy::needless_doctest_main)]
+#![doc = include_str!("../../README.md")]
+#![warn(missing_docs)]
+
 /// Defines a [Field] for a struct with a specific [type](Field::Type).
 pub trait Field<Name> {
+    /// The type of the field.
     type Type;
 
-    /// Returns the value of a field.
+    /// Returns the value of the field.
     fn field(self) -> Self::Type;
 }
 
